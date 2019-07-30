@@ -23,7 +23,8 @@ class UtilisateurController extends AbstractController
      * @Route("/registeruser", name="register", methods={"POST"})
      * @IsGranted("ROLE_SUPER-ADMIN")
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, 
+    EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $values = json_decode($request->getContent());
        
@@ -39,6 +40,11 @@ class UtilisateurController extends AbstractController
             $utilisateur->setEmail($values->email);
             $utilisateur->setcreatedAt(new \Datetime);
             
+            if(!empty($values->partenaire)){
+                $repository = $this->getDoctrine()->getRepository(Partenaire::class);
+                $utilisateur = $repository->find($values->partenaire);
+
+            }
             $errors = $validator->validate($utilisateur);
 
             if(count($errors)) {

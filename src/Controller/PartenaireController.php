@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Depot;
 use App\Entity\Partenaire;
 use App\Repository\PartenaireRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,9 +12,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use App\Entity\Depot;
 
 /**
  * @Route("/api")
@@ -23,7 +24,6 @@ class PartenaireController extends AbstractController
     /**
      * @Route("/regpart", name="register_partenaire")
      * @IsGranted("ROLE_SUPER-ADMIN")
-     * @IsGranted("ROLE_ADMIN")
      */
    
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
@@ -96,11 +96,11 @@ class PartenaireController extends AbstractController
             }else{
                
                 $data = [
-                    'status' =>401 ,
+                    'status' =>500,
                     'message' => 'Le partenaire n\'existe pas'
                 ];
     
-                return new JsonResponse($data, 201);
+                return new JsonResponse($data, 500);
             }
             $entityManager->persist($depot);
 
