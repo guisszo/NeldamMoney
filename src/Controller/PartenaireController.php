@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Partenaire;
-use App\Entity\Utilisateur;
 use App\Repository\PartenaireRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +13,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Entity\Depot;
 
 /**
  * @Route("/api")
@@ -66,7 +66,50 @@ class PartenaireController extends AbstractController
         ]);
     }
 
-   
-  
+       /**
+        * @Route("/depot" , name="depot" , methods={"POST"})
+        */
+        public function depot(Request $request,PartenaireRepository $repository, SerializerInterface $serializer, EntityManagerInterface $entityManager)
+        { 
+           
+            $values = json_decode($request->getContent());
+
+            $repository = $this->getDoctrine()->getRepository(Partenaire::class);
+            $part = $repository->findOneBy(['numcompte'=>$values->numcompte]);
+            
+            $solde = $part->getSolde();
+
+            $part->setSolde($solde + $values->solde);
+            $entityManager->persist($part);
+            
+            if($part){
+                $repository = $this->getDoctrine()->getRepository(Partenaire::class);
+            $part = $repository->find($part);
+                $depot= new Depot();
+                $depot->setCreatedAt(new \Datetime);
+                $depot->setMontant($values->solde);
+                $depot->setPartenaire($part);
+                
+            }else{
+               
+                $data = [
+                    'status' =>401 ,
+                    'message' => 'Le partenaire n\'existe pas'
+                ];
+    
+                return new JsonResponse($data, 201);
+            }
+            $entityManager->persist($depot);
+
+
+            $entityManager->flush();
+            $data = [
+                'status' => 201,
+                'message' => 'L\'partenaire a été créé'
+            ];
+
+            return new JsonResponse($data, 201);
+            }
+            
     
 }

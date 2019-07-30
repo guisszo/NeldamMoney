@@ -19,7 +19,7 @@ use App\Entity\Utilisateur;
 class UtilisateurController extends AbstractController
 {
     /**
-     * @Route("/register", name="register", methods={"POST"})
+     * @Route("/registeruser", name="register", methods={"POST"})
      */
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
