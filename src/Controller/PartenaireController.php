@@ -22,6 +22,8 @@ class PartenaireController extends AbstractController
 {
     /**
      * @Route("/regpart", name="register_partenaire")
+     * @IsGranted("ROLE_SUPER-ADMIN")
+     * @IsGranted("ROLE_ADMIN")
      */
    
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
@@ -54,7 +56,8 @@ class PartenaireController extends AbstractController
                
     }
     /**
-     *@Route("/listerpart", name="listepart", methods={"GET"})
+     * @Route("/listerpart", name="listepart", methods={"GET"})
+     * @IsGranted("ROLE_SUPER-ADMIN")
     */
     public function index(PartenaireRepository $partenaireRepository, SerializerInterface $serializer)
     {
